@@ -1,59 +1,57 @@
-function downloadBlob(blob, name = "file.txt") {
-  const blobUrl = URL.createObjectURL(blob);
-  const link = document.createElement("a");
+const config = { elements: [] };
 
-  link.href = blobUrl;
-  link.download = name;
-  document.body.appendChild(link);
+const renderJSON = () => {
+  document.getElementById("json").textContent = JSON.stringify(
+    config,
+    undefined,
+    2
+  );
+};
 
-  link.click();
+renderJSON();
 
-  document.body.removeChild(link);
+const addElement = () => {
+  const title = document.getElementById("imageBlockTitle").value;
+  const subtitle = document.getElementById("imageBlockSubtitle").value;
+  const image = document.getElementById("imageBlockImage").value;
+  const link = document.getElementById("imageBlockLink").value;
+
+  console.log(title);
+  config.elements.push({ type: "imageBlock", title, subtitle, image, link });
+  renderJSON();
+
+  document.getElementById("imageBlockTitle").value = "";
+  document.getElementById("imageBlockSubtitle").value = "";
+  document.getElementById("imageBlockImage").value = "";
+  document.getElementById("imageBlockLink").value = "";
+};
+
+function onChangeType() {
+  var x = document.getElementById("type").value;
+  console.log("on change type", x);
 }
 
 function onSubmitForm(e) {
   e.preventDefault();
 
-  const errElement = document.getElementById("err");
-  if (errElement.innerHTML) {
-    errElement.innerHTML = "";
-    errElement.removeAttribute("class");
-  }
+  return false;
+}
 
-  const myform = document.getElementById("myform");
-  const formdata = new FormData(myform);
-
-  if (!formdata.get("markdownFile").name) {
-    errElement.innerHTML = "Choose a file";
-    errElement.setAttribute("class", "error");
-    return;
-  }
-
+function generate() {
   fetch(`${window.origin}/generate`, {
     method: "POST",
-    body: formdata,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(config),
   })
     .then((res) => {
       console.log("res", res);
-      if (res.status === 400) {
-        throw new Error("Error");
-      }
-
-      return res
-        .blob()
-        .then((blob) => ({
-          filename: res.headers.get("filename"),
-          raw: blob,
-        }))
-        .then((result) => {
-          downloadBlob(result.raw, result.filename);
-        });
     })
     .catch(() => {
       const errElement = document.getElementById("err");
       errElement.innerHTML = "Error";
       errElement.setAttribute("class", "error");
     });
-
-  return false;
 }

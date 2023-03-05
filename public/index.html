@@ -10,37 +10,57 @@
   <body>
     <section class="main">
       <div class="container">
-        <h3>markdown-to-email demo</h3>
+        <h3>nmtg email editor</h3>
 
-        <form
-          id="myform"
-          onsubmit="return onSubmitForm(event)"
-          enctype="multipart/form-data"
-        >
-          <div class="row">
-            <label for="markdownFile">Choose a markdown file:</label>
-            <input accept=".md" type="file" name="markdownFile" />
+        <div class="flex space-between two-blocks">
+          <div>
+            <form
+              id="myform"
+              onsubmit="return onSubmitForm(event)"
+              enctype="multipart/form-data"
+            >
+              <div class="row">
+                <label for="type">Type</label>
+                <select id="type" onchange="onChangeType()" name="type">
+                  <option value="imageBlock">Image block</option>
+                  <option value="another">Another type</option>
+                </select>
+              </div>
+
+              <div class="block" id="imageBlock">
+                <div class="row">
+                  <label for="imageBlockTitle">Title</label>
+                  <input id="imageBlockTitle" type="text" />
+                </div>
+
+                <div class="row">
+                  <label for="imageBlockSubtitle">Subtitle</label>
+                  <input id="imageBlockSubtitle" type="text" />
+                </div>
+
+                <div class="row">
+                  <label for="imageBlockImage">Image</label>
+                  <input id="imageBlockImage" type="text" />
+                </div>
+
+                <div class="row">
+                  <label for="imageBlockLink">Link</label>
+                  <input id="imageBlockLink" type="text" />
+                </div>
+              </div>
+
+              <button onclick="addElement()">Add element</button>
+              <p>
+                <button id="generateButton" onclick="generate()">Generate</button>
+              </p>
+              <div id="err"></div>
+            </form>
           </div>
-
-          <div class="row">
-            <label for="template">Template</label>
-            <select name="template">
-              <option value="hackernoon">Hackernoon</option>
-              <option value="recipes">Recipes</option>
-            </select>
+          <div class="config-block">
+            <h4>Config</h4>
+            <pre id="json"></pre>
           </div>
-
-          <div class="row">
-            <label for="generateTo">Generate to</label>
-            <select name="generateTo">
-              <option value="html" selected>HTML</option>
-              <option value="react">React component</option>
-            </select>
-          </div>
-
-          <p><input id="generateButton" type="submit" value="Generate" /></p>
-          <div id="err"></div>
-        </form>
+        </div>
       </div>
     </section>
 
